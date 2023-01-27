@@ -2,7 +2,7 @@ Use [Reviewing deployments](https://docs.github.com/en/actions/managing-workflow
 
 # approved-event-action
 
-This action provide Pseudo Appeoved Event.
+This action provide Pseudo Approved Event.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Pull Request is approved or not. if approved, value is `true`;
       myJob:
         runs-on: ubuntu-latest
         steps:
-        - uses: taichi/approved-event-action@v1.2.1
+        - uses: iyhunko/pr-approved-action@v1.0.0
           id: approved
           with:
             approvals: '2'
