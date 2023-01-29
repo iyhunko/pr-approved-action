@@ -43,12 +43,6 @@ async function run() {
         }
       });
 
-//       Object.entries(userReviewStates).forEach(([[userLogin: string], reviewStateValue: string]) => {
-//         if (reviewStateValue === "APPROVED") {
-//           currentApprovalsCount++;
-//         }
-//       });
-
       if (currentApprovalsCount >= expectedApprovalsCount) {
         core.setOutput("approved", "true");
         core.exportVariable("APPROVED", "true");
