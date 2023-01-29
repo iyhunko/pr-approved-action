@@ -23,22 +23,29 @@ async function run() {
       return;
     }
     if (action === "submitted" && state === "approved") {
-      const approvals = getApprovals();
+      const expectedApprovalsCount = getApprovals();
       const octokit = new Octokit({ auth: `token ${token}` });
       const [owner, repo] = nwo.split("/");
       const options = octokit.pulls.listReviews.endpoint.merge({ owner, repo, pull_number: payload.pull_request.number });
       const list = map((response: Octokit.Response<Octokit.PullsListReviewsResponse>) => response.data, octokit.paginate.iterator(options));
 
-      const users = new Set<string>();
+      const userReviewStates: {[k: string]: string} = {};
+
       for await (const review of flatten(list)) {
-        if (review.state === "APPROVED") {
-          users.add(review.user.login);
-          if (approvals <= users.size) {
-            core.setOutput("approved", "true");
-            core.exportVariable("APPROVED", "true");
-            break;
-          }
+        userReviewStates[review.user.login] = review.state;
+      }
+
+      let currentApprovalsCount = 0;
+
+      Object.keys(userReviewStates).forEach((userLogin: string) => {
+        if (userReviewStates[userLogin] === "APPROVED") {
+          currentApprovalsCount++;
         }
+      });
+
+      if (currentApprovalsCount >= expectedApprovalsCount) {
+        core.setOutput("approved", "true");
+        core.exportVariable("APPROVED", "true");
       }
     } else {
       core.info(`${process.env.GITHUB_EVENT_NAME}/${action}/${state} is not supported.`);
