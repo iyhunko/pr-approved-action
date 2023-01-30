@@ -18,6 +18,7 @@ async function run() {
     const payload = JSON.parse(await readFile(path, { encoding: "utf-8" }));
     const action = payload.action;
     const state = payload.review.state;
+
     if (!payload.pull_request) {
       core.setFailed("this event doesn't contain pull request");
       return;
@@ -32,7 +33,10 @@ async function run() {
       const userReviewStates: {[k: string]: string} = {};
 
       for await (const review of flatten(list)) {
-        userReviewStates[review.user.login] = review.state;
+        // check reviews of only last commit
+        if (review.commit_id === payload.pull_request.head.sha) {
+          userReviewStates[review.user.login] = review.state;
+        }
       }
 
       let currentApprovalsCount = 0;
@@ -44,7 +48,6 @@ async function run() {
       });
 
       core.info(`current approvals: ${currentApprovalsCount}`);
-      core.info(`expected approvals: ${expectedApprovalsCount}`);
 
       if (currentApprovalsCount >= expectedApprovalsCount) {
         core.setOutput("approved", "true");
