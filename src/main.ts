@@ -19,9 +19,6 @@ async function run() {
     const action = payload.action;
     const state = payload.review.state;
 
-    const payloadJson = JSON.stringify(payload);
-    core.info(`payload: ${payloadJson}`);
-
     if (!payload.pull_request) {
       core.setFailed("this event doesn't contain pull request");
       return;
@@ -36,8 +33,6 @@ async function run() {
       const userReviewStates: {[k: string]: string} = {};
 
       for await (const review of flatten(list)) {
-        const reviewJson = JSON.stringify(review);
-        core.info(`review item: ${reviewJson}`);
         // check reviews of only last commit
         if (review.commit_id === payload.pull_request.head.sha) {
           userReviewStates[review.user.login] = review.state;
