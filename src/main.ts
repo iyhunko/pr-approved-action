@@ -38,7 +38,10 @@ async function run() {
       for await (const review of flatten(list)) {
         const reviewJson = JSON.stringify(review);
         core.info(`review item: ${reviewJson}`);
-        userReviewStates[review.user.login] = review.state;
+        // check reviews of only last commit
+        if (review.commit_id === payload.pull_request.head.sha) {
+          userReviewStates[review.user.login] = review.state;
+        }
       }
 
       let currentApprovalsCount = 0;
