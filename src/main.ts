@@ -42,7 +42,7 @@ async function run() {
           currentApprovalsCount++;
         }
       });
-
+      core.info(`current approvals: ${currentApprovalsCount}`);
       if (currentApprovalsCount >= expectedApprovalsCount) {
         core.setOutput("approved", "true");
         core.exportVariable("APPROVED", "true");
