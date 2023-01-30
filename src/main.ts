@@ -48,7 +48,6 @@ async function run() {
       });
 
       core.info(`current approvals: ${currentApprovalsCount}`);
-      core.info(`expected approvals: ${expectedApprovalsCount}`);
 
       if (currentApprovalsCount >= expectedApprovalsCount) {
         core.setOutput("approved", "true");
