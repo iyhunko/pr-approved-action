@@ -18,6 +18,9 @@ async function run() {
     const payload = JSON.parse(await readFile(path, { encoding: "utf-8" }));
     const action = payload.action;
     const state = payload.review.state;
+
+    core.info(`payload: ${payload}`);
+
     if (!payload.pull_request) {
       core.setFailed("this event doesn't contain pull request");
       return;
@@ -33,7 +36,7 @@ async function run() {
 
       for await (const review of flatten(list)) {
         const reviewJson = JSON.stringify(review);
-        core.info(`current approvals: ${reviewJson}`);
+        core.info(`review item: ${reviewJson}`);
         userReviewStates[review.user.login] = review.state;
       }
 
