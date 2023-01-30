@@ -32,6 +32,8 @@ async function run() {
       const userReviewStates: {[k: string]: string} = {};
 
       for await (const review of flatten(list)) {
+        const reviewJson = JSON.stringify(review)
+        core.info(`current approvals: ${reviewJson}`);
         userReviewStates[review.user.login] = review.state;
       }
 
